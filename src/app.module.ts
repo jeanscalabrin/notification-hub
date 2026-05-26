@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [ConfigModule, UsersModule],
+  imports: [ConfigModule.forRoot(), UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })

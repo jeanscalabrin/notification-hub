@@ -10,6 +10,6 @@ export class UsersController {
   async signupUser(
     @Body() userData: { name?: string; email: string; password: string },
   ): Promise<UserModel> {
-    return this.userService.createuser(userData);
+    return this.userService.createUser(userData);
   }
 }
