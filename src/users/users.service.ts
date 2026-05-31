@@ -3,20 +3,26 @@ import { Prisma, User } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import * as argon2 from 'argon2';
-import { UserResponseDto } from './dtos/user-response.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async findById(id: string): Promise<UserResponseDto> {
+  async findById(id: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  async findByIdOrThrow(id: string): Promise<User> {
     return this.prisma.user.findUniqueOrThrow({
       where: { id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-      },
+    });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUniqueOrThrow({
+      where: { email },
     });
   }
 
