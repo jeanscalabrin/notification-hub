@@ -1,20 +1,26 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { Prisma, User } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma.service';
+import { CreateUserDto } from './dtos/create-user.dto';
+import * as argon2 from 'argon2';
+import { UserResponseDto } from './dtos/user-response.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async user(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
+  async findById(id: string): Promise<UserResponseDto> {
+    return this.prisma.user.findUniqueOrThrow({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
     });
   }
 
-  async users(params: {
+  async findUsers(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.UserWhereUniqueInput;
@@ -31,7 +37,7 @@ export class UsersService {
     });
   }
 
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+  async createUser(data: CreateUserDto): Promise<User> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -40,8 +46,13 @@ export class UsersService {
       throw new ConflictException('A user with this email already exists');
     }
 
+    const passwordHash = await argon2.hash(data.password);
+
     return this.prisma.user.create({
-      data,
+      data: {
+        ...data,
+        passwordHash,
+      },
     });
   }
 
