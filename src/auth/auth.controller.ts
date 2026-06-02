@@ -11,10 +11,17 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { User } from '../users/user.decorator';
 import type { JwtPayload } from '../common/interfaces/jwt-payload.interface';
+import { CreateUserDto } from '../users/dtos/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @HttpCode(HttpStatus.CREATED)
+  @Post('signup')
+  signUp(@Body() data: CreateUserDto) {
+    return this.authService.signUp(data);
+  }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
