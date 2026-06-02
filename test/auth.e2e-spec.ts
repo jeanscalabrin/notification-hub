@@ -26,21 +26,32 @@ describe('Auth (e2e)', () => {
     await app.close();
   });
 
-  it('/auth/signup (POST)', () => {
-    const payload = {
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password: '123456',
-    };
+  describe('/auth/signup (POST)', () => {
+    it('should return user created', () => {
+      const payload = {
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        password: '123456',
+      };
 
-    return request(app.getHttpServer())
-      .post('/auth/signup')
-      .send(payload)
-      .expect(201);
-  });
+      return request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(payload)
+        .expect(201);
+    });
 
-  afterEach(async () => {
-    await app.close();
+    it('should not return passwordHash on signup', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/auth/signup')
+        .send({
+          name: 'John Doe',
+          email: 'john@example.com',
+          password: '123456',
+        })
+        .expect(201);
+
+      expect(response.body.passwordHash).toBeUndefined();
+    });
   });
 
   it('/auth/login (POST)', async () => {

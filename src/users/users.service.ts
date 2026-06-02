@@ -3,6 +3,7 @@ import { Prisma, User } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import * as argon2 from 'argon2';
+import { UserResponseDto } from './dtos/user-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -43,7 +44,7 @@ export class UsersService {
     });
   }
 
-  async createUser(data: CreateUserDto): Promise<User> {
+  async createUser(data: CreateUserDto): Promise<UserResponseDto> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -54,11 +55,16 @@ export class UsersService {
 
     const passwordHash = await argon2.hash(data.password);
 
-    return this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
         passwordHash,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
       },
     });
   }
