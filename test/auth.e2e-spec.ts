@@ -21,6 +21,11 @@ describe('Auth (e2e)', () => {
     await app.init();
   });
 
+  afterEach(async () => {
+    await prisma.$disconnect();
+    await app.close();
+  });
+
   it('/auth/signup (POST)', () => {
     const payload = {
       name: 'John Doe',
@@ -38,15 +43,12 @@ describe('Auth (e2e)', () => {
     await app.close();
   });
 
-  it('/auth/login', async () => {
-    await request(app.getHttpServer())
-      .post('/auth/signup')
-      .send({
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: '123456',
-      })
-      .expect(201);
+  it('/auth/login (POST)', async () => {
+    await request(app.getHttpServer()).post('/auth/signup').send({
+      name: 'John Doe',
+      email: 'john@example.com',
+      password: '123456',
+    });
 
     const response = await request(app.getHttpServer())
       .post('/auth/login')
@@ -57,5 +59,33 @@ describe('Auth (e2e)', () => {
       .expect(200);
 
     expect(response.body.accessToken).toBeDefined();
+  });
+
+  it('/auth/me (GET)', async () => {
+    await request(app.getHttpServer()).post('/auth/signup').send({
+      name: 'John Doe',
+      email: 'john@example.com',
+      password: '123456',
+    });
+
+    const loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: 'john@example.com',
+        password: '123456',
+      });
+
+    const token = loginResponse.body.accessToken;
+
+    const response = await request(app.getHttpServer())
+      .get('/auth/me')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    expect(response.body.email).toBe('john@example.com');
+  });
+
+  it('/auth/me (GET) reject unauthenticated user', async () => {
+    await request(app.getHttpServer()).get('/auth/me').expect(401);
   });
 });
