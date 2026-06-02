@@ -16,10 +16,13 @@ export class AuthService {
     return await this.usersService.createUser(data);
   }
 
-  async signIn(
-    email: string,
-    password: string,
-  ): Promise<{ accessToken: string }> {
+  async signIn({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<{ accessToken: string }> {
     const user = await this.usersService.findByEmail(email);
 
     if (!user) {
