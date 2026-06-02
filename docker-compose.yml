@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: notification_hub_db
+      POSTGRES_DB: notification_hub
 
   pgadmin:
     image: dpage/pgadmin4:latest
