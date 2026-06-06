@@ -5,16 +5,23 @@ import {
   Notification,
   NotificationStatus,
 } from '../../generated/prisma/client';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+
+    @InjectQueue('notifications')
+    private readonly queue: Queue,
+  ) {}
 
   async create(
     userId: string,
     dto: CreateNotificationDto,
   ): Promise<Notification | null> {
-    return this.prisma.notification.create({
+    const notification = await this.prisma.notification.create({
       data: {
         userId,
         title: dto.title,
@@ -23,6 +30,18 @@ export class NotificationsService {
         channel: dto.channel,
       },
     });
+
+    await this.queue.add(
+      'send-notification',
+      {
+        notificationId: notification.id,
+      },
+      {
+        delay: 2000,
+      },
+    );
+
+    return notification;
   }
 
   async findAll(userId: string): Promise<Notification[]> {
