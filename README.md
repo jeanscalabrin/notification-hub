@@ -59,7 +59,7 @@ O projeto foi criado com foco em arquitetura backend moderna utilizando NestJS, 
 
 ```http
 POST /auth/signup
-POST /auth/signin
+POST /auth/login
 GET  /auth/me
 ```
 
@@ -101,6 +101,12 @@ npm install
 cp .env.example .env
 ```
 
+### Executar generator
+
+```bash
+npx prisma generate 
+```
+
 ### Executar migrations
 
 ```bash
@@ -127,12 +133,6 @@ npm run start:dev
 
 ```bash
 npm run test
-```
-
-### End-to-End Tests
-
-```bash
-npm run test:e2e
 ```
 
 ---
