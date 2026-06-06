@@ -1,34 +1,42 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
+  UseGuards,
+  Get,
   Param,
-  Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { AuthGuard } from '@/auth/auth.guard';
+import type { JwtPayload } from '@/common/interfaces/jwt-payload.interface';
+import { User } from '@/users/user.decorator';
 
+@UseGuards(AuthGuard)
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Post()
-  create(@Body() createNotificationDto: CreateNotificationDto) {
-    return this.notificationsService.create(createNotificationDto);
+  @HttpCode(HttpStatus.CREATED)
+  create(
+    @User() user: JwtPayload,
+    @Body() createNotificationDto: CreateNotificationDto,
+  ) {
+    return this.notificationsService.create(user.sub, createNotificationDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.notificationsService.findAll();
-  // }
+  @Get()
+  findAll(@User() user: JwtPayload) {
+    return this.notificationsService.findAll(user.sub);
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.notificationsService.findOne(+id);
-  // }
+  @Get(':id')
+  findById(@User() user: JwtPayload, @Param('id') id: string) {
+    return this.notificationsService.findById(user.sub, id);
+  }
 
   // @Patch(':id')
   // update(

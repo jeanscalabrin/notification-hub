@@ -15,7 +15,7 @@ export class NotificationsService {
     userId: string,
     dto: CreateNotificationDto,
   ): Promise<Notification | null> {
-    return await this.prisma.notification.create({
+    return this.prisma.notification.create({
       data: {
         userId,
         title: dto.title,
@@ -53,12 +53,4 @@ export class NotificationsService {
 
     return notification;
   }
-
-  // update(id: number, updateNotificationDto: UpdateNotificationDto) {
-  //   return `This action updates a #${id} notification`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} notification`;
-  // }
 }
