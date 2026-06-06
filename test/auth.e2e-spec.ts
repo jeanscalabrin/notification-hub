@@ -9,7 +9,7 @@ describe('Auth (e2e)', () => {
   let app: INestApplication<App>;
   let prisma: PrismaService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -17,11 +17,14 @@ describe('Auth (e2e)', () => {
     app = moduleFixture.createNestApplication();
     prisma = moduleFixture.get(PrismaService);
 
-    await prisma.user.deleteMany();
     await app.init();
   });
 
-  afterEach(async () => {
+  beforeEach(async () => {
+    await prisma.user.deleteMany();
+  });
+
+  afterAll(async () => {
     await prisma.$disconnect();
     await app.close();
   });
