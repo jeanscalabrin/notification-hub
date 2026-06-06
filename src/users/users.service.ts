@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, User } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -16,15 +20,27 @@ export class UsersService {
   }
 
   async findByIdOrThrow(id: string): Promise<User> {
-    return this.prisma.user.findUniqueOrThrow({
+    const user = await this.prisma.user.findUnique({
       where: { id },
     });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUniqueOrThrow({
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
       where: { email },
     });
+
+    if (!user) {
+      throw new NotFoundException('User not found!');
+    }
+
+    return user;
   }
 
   async findUsers(params: {
