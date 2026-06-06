@@ -20,6 +20,7 @@ export class NotificationsService {
         title: dto.title,
         body: dto.body,
         status: NotificationStatus.PENDING,
+        channel: dto.channel,
       },
     });
   }

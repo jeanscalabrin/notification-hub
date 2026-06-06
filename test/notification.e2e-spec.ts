@@ -4,6 +4,7 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '@/prisma.service';
+import { NotificationChannel } from '../generated/prisma/enums';
 
 describe('Notification (e2e)', () => {
   let app: INestApplication<App>;
@@ -50,6 +51,7 @@ describe('Notification (e2e)', () => {
     const payload = {
       title: 'Test',
       body: 'Body',
+      channel: NotificationChannel.IN_APP,
     };
 
     return request(app.getHttpServer())
@@ -63,6 +65,7 @@ describe('Notification (e2e)', () => {
     const payload = {
       title: 'Test',
       body: 'Body',
+      channel: NotificationChannel.IN_APP,
     };
 
     await request(app.getHttpServer())
@@ -89,6 +92,7 @@ describe('Notification (e2e)', () => {
     const payload = {
       title: 'Test',
       body: 'Body',
+      channel: NotificationChannel.IN_APP,
     };
 
     const resNotif = await request(app.getHttpServer())

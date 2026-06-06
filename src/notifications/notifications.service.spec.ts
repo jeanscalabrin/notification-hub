@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotificationsService } from './notifications.service';
 import { PrismaService } from '@/prisma.service';
+import { NotificationChannel } from '../../generated/prisma/enums';
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
@@ -36,6 +37,7 @@ describe('NotificationsService', () => {
     const notif = await service.create(user.id, {
       title: 'Welcome',
       body: 'Hello',
+      channel: NotificationChannel.IN_APP,
     });
 
     expect(notif).toMatchObject({
@@ -66,6 +68,7 @@ describe('NotificationsService', () => {
         userId: user1.id,
         title: 'N1',
         body: 'Body',
+        channel: NotificationChannel.IN_APP,
       },
     });
     await prisma.notification.create({
@@ -73,6 +76,7 @@ describe('NotificationsService', () => {
         userId: user1.id,
         title: 'N2',
         body: 'Body',
+        channel: NotificationChannel.IN_APP,
       },
     });
     await prisma.notification.create({
@@ -80,6 +84,7 @@ describe('NotificationsService', () => {
         userId: user2.id,
         title: 'N3',
         body: 'Body',
+        channel: NotificationChannel.IN_APP,
       },
     });
     const result = await service.findAll(user1.id);
@@ -106,6 +111,7 @@ describe('NotificationsService', () => {
         userId: user1.id,
         title: 'N1',
         body: 'Body',
+        channel: NotificationChannel.IN_APP,
       },
     });
     await prisma.notification.create({
@@ -113,6 +119,7 @@ describe('NotificationsService', () => {
         userId: user1.id,
         title: 'N2',
         body: 'Body',
+        channel: NotificationChannel.IN_APP,
       },
     });
     await prisma.notification.create({
@@ -120,6 +127,7 @@ describe('NotificationsService', () => {
         userId: user2.id,
         title: 'N3',
         body: 'Body',
+        channel: NotificationChannel.IN_APP,
       },
     });
     const result = await service.findAll(user2.id);
@@ -140,6 +148,7 @@ describe('NotificationsService', () => {
         userId: user.id,
         title: 'N1',
         body: 'Body',
+        channel: NotificationChannel.IN_APP,
       },
     });
 
@@ -182,6 +191,7 @@ describe('NotificationsService', () => {
         userId: user1.id,
         title: 'N1',
         body: 'Body',
+        channel: NotificationChannel.IN_APP,
       },
     });
 
