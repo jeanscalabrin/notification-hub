@@ -42,7 +42,7 @@ model Notification {
 enum NotificationStatus {
   PENDING
   PROCESSING
-  DELIBERED
+  DELIVERED
   FAILED
 }
 

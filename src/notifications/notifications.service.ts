@@ -31,15 +31,9 @@ export class NotificationsService {
       },
     });
 
-    await this.queue.add(
-      'send-notification',
-      {
-        notificationId: notification.id,
-      },
-      {
-        delay: 2000,
-      },
-    );
+    await this.queue.add('send-notification', {
+      notificationId: notification.id,
+    });
 
     return notification;
   }
@@ -71,5 +65,28 @@ export class NotificationsService {
     }
 
     return notification;
+  }
+
+  async process(notificationId: string) {
+    await this.prisma.notification.update({
+      where: {
+        id: notificationId,
+      },
+      data: {
+        status: 'PROCESSING',
+      },
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    await this.prisma.notification.update({
+      where: {
+        id: notificationId,
+      },
+      data: {
+        status: NotificationStatus.DELIVERED,
+        sentAt: new Date(),
+      },
+    });
   }
 }
