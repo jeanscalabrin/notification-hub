@@ -37,17 +37,4 @@ export class NotificationsController {
   findById(@User() user: JwtPayload, @Param('id') id: string) {
     return this.notificationsService.findById(user.sub, id);
   }
-
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateNotificationDto: UpdateNotificationDto,
-  // ) {
-  //   return this.notificationsService.update(+id, updateNotificationDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.notificationsService.remove(+id);
-  // }
 }
